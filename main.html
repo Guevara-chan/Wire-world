@@ -1,0 +1,39 @@
+<html> 
+	<head>
+		<title>◢.Wire=world.◣</title>
+		<script src="lib/phaser.min.js"></script>
+		<script src="lib/coffeescript.js"></script>
+		<script type="text/coffeescript" src="./wireworld.coffee"></script>
+		<style>
+			@font-face {
+    			font-family: Roboto;
+    			src: url(res/3966.ttf);
+				}
+
+
+			a {text-decoration: none; color: #DD8964; text-shadow: -1px -1px 2px black; font-style: italic; font-weight: bold;}
+			a:hover {text-shadow: 1px 1px 2px black, 0 0 1em red; transition: .5s}
+
+			div {text-shadow: 1px 1px 2px darkgrey; font-weight: bold;}
+			
+			.reminder {position:absolute; margin: 0px 0px 0px 3px; text-align: center; border-width: 0px 2px 0px 0px; border-style: solid; border-color: black; font-family: Roboto; font-size: 14;}
+			.rreminder {border-width: 0px 0px 0px 2px;}
+			.reminder:hover {color: linen; transition: .5s}
+		</style>
+	</head>
+
+	<body style='margin:0; background: #0f0f0f -webkit-repeating-linear-gradient(top, transparent 0px, transparent 1px, rgba(0, 0, 0, 0.25)	1px, rgba(0, 0, 0, 0.25) 2px); -webkit-background-size: 100% 2px; overflow: hidden'>
+		<center style = "position: absolute; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); ">
+		<div style="background: slategray; border-radius: 5px 5px 0px 0px; padding: 0px 0px 1px 0px ;">
+			<div class='reminder'>🞇 LMB & RMB to modify </div>
+			<div class='reminder rreminder' style="left: 89%"> ESC to exit 🞇</div>
+			<a href='http://github.com/Guevara-chan/Wire-world' target="_blank">Wire=world</a> celluar automata v0.01</div>
+		<div id='vp', style='border-width: 0px 1px 0px 1px; border-style: dashed; border-color: slategray'></div>
+		<div style="background: slategray; border-radius: 0px 0px 5px 5px; padding: 0px 0px 1px 0px ;">
+			<div class='reminder'>🞇 🡑🡐🡒🡓 to scroll </div>
+			<div class='reminder rreminder' style="left: 81%"> Wheel to zoom & drag 🞇</div>
+			Developed in 2018 by <a href='http://vk.com/guevara_chan' target="_blank">V.A. Guevara</a></div>
+		</center>
+		<script type="text/coffeescript" src="./ui.coffee"></script>
+	</body>
+</html>
