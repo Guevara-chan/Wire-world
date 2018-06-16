@@ -117,8 +117,15 @@ class UI
 		@vp			= new ViewPort(@scene, @machine)
 		@vp.zoom	= init_scale
 		# Pseudo-GUI setup.
-		@tinformer	= @scene.add.text(@vp.width / 2, 20, "").setOrigin 0.5
-		@binformer	= @scene.add.text(@vp.width / 2, @vp.height - 20, "").setOrigin 0.5
+		infobar		= (y) =>
+			bar = @scene.add.text(@vp.width / 2, y, "{I am error}").setOrigin 0.5
+			console.log bar
+			@decor.fillRect(0, bar.y - bar.displayOriginY - 1, @vp.width, bar.displayHeight + 2)
+			return bar
+		@decor		= @scene.add.graphics 0, 0
+		@decor.fillStyle(0x0000ff, 0.3)
+		@tinformer	= infobar 20
+		@binformer	= infobar @vp.height - 20
 		# Keyboard inputs.
 		@scene.input.keyboard.on "keydown_#{key}", @on[proc] for key, proc of {
 			ENTER:'toggle', DELETE:'clear', SPACE:'step',	ESC: 'exit',	PAGE_UP:'zoomin', PAGE_DOWN:'zoomout',
@@ -150,7 +157,7 @@ class UI
 		# GUI render.
 		@tinformer.setText "Zoom: #{@vp.zoom}x [PgUp/PgDn] | Speed: #{@speed}% [+/-] |
 		#{@powered.either 'P', 'Unp'}owered [Enter]"
-		@binformer.setText "Field: #{@machine.width}x#{@machine.height} [Copy/Paste/Del]" +
+		@binformer.setText "Matrix: #{@machine.width}x#{@machine.height} [Copy/Paste/Del]" +
 			@powered.either "", " | Cycle: 0x#{@machine.ticks.toString(16)} [Space]"
 		# VP render.
 		@vp.sync()
