@@ -3,4 +3,4 @@ __Wire=world__ is a [wireworld](https://en.wikipedia.org/wiki/Wireworld) machine
 Optimization and retro aesthetics are highly prioritized during develepment process.
 
 # ⋮Brief sampling of logic power⋮
-![image](https://user-images.githubusercontent.com/8768470/41505338-8b2bfe52-720f-11e8-93fd-a31df6c65bff.png)
+![image](https://user-images.githubusercontent.com/8768470/41505391-3504b3e6-7211-11e8-9c86-e5fb837a146a.png)
