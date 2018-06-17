@@ -182,12 +182,9 @@ class UI
 		up:		() -> @vp.scrollY++ ;					@
 		down:	() -> @vp.scrollY-- ;					@
 		save:	() -> 
-			a = document.createElement('a');
-			a.href = 'https://www.google.ru/logos/doodles/2016/2016-hockey-world-championship-5085766322487296.2-hp.jpg';
-			a.download = true;
-			event = document.createEvent('Event');
-			event.initEvent('click', true, true);
-			alert a.dispatchEvent(event)
+			console.log saveAs new Blob([@machine.ascii], {type: "text/plain;charset=utf-8"}),
+				"[#{@machine.width}x#{@machine.height}] matrix.w=w"
+			return @
 		load:	() -> @
 		noop:	() -> @
 
