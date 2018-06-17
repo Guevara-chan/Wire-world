@@ -134,7 +134,7 @@ class UI
 		# Keyboard inputs.
 		@scene.input.keyboard.on "keydown_#{key}", @on[proc] for key, proc of {
 			ENTER:'toggle', DELETE:'clear', SPACE:'step',	ESC: 'exit',	PAGE_UP:'zoomin', PAGE_DOWN:'zoomout',
-			PLUS:'haste',	MINUS:'slow',	LEFT:'left',	RIGHT:'right',	UP:'up', DOWN:'down', S:"save"
+			PLUS:'haste',	MINUS:'slow',	LEFT:'left',	RIGHT:'right',	UP:'up', DOWN:'down', S:"save", L:"load"
 		}
 		# Clipboard inputs.
 		window.addEventListener 'paste', (e) => @machine.ascii = e.clipboardData.getData 'Text'
@@ -181,7 +181,13 @@ class UI
 		right:	() -> @vp.scrollX-- ;					@
 		up:		() -> @vp.scrollY++ ;					@
 		down:	() -> @vp.scrollY-- ;					@
-		save:	() -> @
+		save:	() -> 
+			a = document.createElement('a');
+			a.href = 'https://www.google.ru/logos/doodles/2016/2016-hockey-world-championship-5085766322487296.2-hp.jpg';
+			a.download = true;
+			event = document.createEvent('Event');
+			event.initEvent('click', true, true);
+			alert a.dispatchEvent(event)
 		load:	() -> @
 		noop:	() -> @
 
