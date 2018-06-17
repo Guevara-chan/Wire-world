@@ -22,13 +22,20 @@ class VisualAutomata extends Automata
 
 	morph: (x, y, shift = 1) ->
 		@set x, y, Cell.cycle @get(x, y), shift
+		return @
+
+	resize: (width, height, feeder = @clear()) ->
+		throw new TypeError("invalid matrix data provided") unless height > 1 and width > 1
+		[@width, @height, @ticks, @cells] = [width, height, 0, feeder]
+		return @
 
 	render: (bmp, scale = 1) ->
 		ptr	= 0
 		for row, y in @cells
 			for cell, x in row
-				c = [0x000022, 0xffff00, 0x00ffff, 0xff0000, 0x00ff00][cell] 
+				c = [0x000022, 0xffff00, 0x00ffff, 0xff0000][cell] 
 				bmp[ptr++] = c>>16 & 255; bmp[ptr++] = c>>8 & 255; bmp[ptr++] = c & 255; bmp[ptr++] = 0xff
+		return @
 
 	tick: (args...) ->
 		@last_update = Date.now()
@@ -41,9 +48,7 @@ class VisualAutomata extends Automata
 		unless val.split('').find (char) -> not (char in _ascii_set or char in '\n')
 			height	= (val = val.split '\n').length
 			width	= val[0]?.length
-		if height > 1 and width > 1 then [@width, @height, @ticks] = [width, height, 0]
-		else throw new TypeError("invalid matrix data provided")
-		@cells	= (Uint8Array.from (_ascii_set.indexOf cell for cell in row) for row in val)
+		@resize width, height, (Uint8Array.from (_ascii_set.indexOf cell for cell in row) for row in val)
 # -------------------- #
 class ViewPort
 	scroll = {x: 0, y: 0}
@@ -53,7 +58,6 @@ class ViewPort
 		[@width, @height]	= [@scene.cameras.main.width, @scene.cameras.main.height]
 		@output				= @scene.textures.createCanvas 'cvs', @machine.width, @machine.height
 		@proj				= @scene.add.image @width / 2, @height / 2, 'cvs'
-		#@sync()
 
 	pick: (screen_x, screen_y) ->
 		[(screen_x - @proj.x + @proj.displayOriginX * @zoom) // @zoom,
@@ -88,7 +92,7 @@ class ViewPort
 	@setter 'scrollY', (val)	-> scroll.y = val.wrap @machine.height
 # -------------------- #
 class UI
-	init_scale	= 10
+	init_scale	= 6
 	scrolling	= false
 
 	# --Methods goes here.
@@ -119,17 +123,18 @@ class UI
 		# Pseudo-GUI setup.
 		infobar		= (y) =>
 			bar = @scene.add.text(@vp.width / 2, y, "{I am error}").setOrigin 0.5
-			console.log bar
-			@decor.fillRect(0, bar.y - bar.displayOriginY - 1, @vp.width, bar.displayHeight + 2)
+			y	= bar.y - bar.displayOriginY - 1
+			for x in [0..@vp.width] by 3
+				@decor.lineBetween(x, y, x, y + bar.displayHeight + 2)
 			return bar
 		@decor		= @scene.add.graphics 0, 0
-		@decor.fillStyle(0x0000ff, 0.3)
+		@decor.lineStyle 1, 0x0000ff, .3
 		@tinformer	= infobar 20
 		@binformer	= infobar @vp.height - 20
 		# Keyboard inputs.
 		@scene.input.keyboard.on "keydown_#{key}", @on[proc] for key, proc of {
 			ENTER:'toggle', DELETE:'clear', SPACE:'step',	ESC: 'exit',	PAGE_UP:'zoomin', PAGE_DOWN:'zoomout',
-			PLUS:'haste',	MINUS:'slow',	LEFT:'left',	RIGHT:'right',	UP:'up', DOWN:'down'
+			PLUS:'haste',	MINUS:'slow',	LEFT:'left',	RIGHT:'right',	UP:'up', DOWN:'down', S:"save"
 		}
 		# Clipboard inputs.
 		window.addEventListener 'paste', (e) => @machine.ascii = e.clipboardData.getData 'Text'
@@ -168,7 +173,7 @@ class UI
 		clear:	() -> @machine.clear();					@
 		step:	() -> @machine.tick() unless @powered;	@
 		exit:	() -> window.close();					@
-		zoomin:	() -> @vp.zoom++ if @vp.zoom < 30;		@
+		zoomin:	() -> @vp.zoom++ if @vp.zoom < 20;		@
 		zoomout:() -> @vp.zoom-- if @vp.zoom > 1;		@
 		haste:	() -> @speed += 10 if @speed < 100;		@
 		slow:	() -> @speed -= 10 if @speed > 10;		@
@@ -176,6 +181,8 @@ class UI
 		right:	() -> @vp.scrollX-- ;					@
 		up:		() -> @vp.scrollY++ ;					@
 		down:	() -> @vp.scrollY-- ;					@
+		save:	() -> @
+		load:	() -> @
 		noop:	() -> @
 
 	# --Properties goes here.
