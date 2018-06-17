@@ -3,7 +3,7 @@ __Wire=world__ is a [wireworld](https://en.wikipedia.org/wiki/Wireworld) machine
 Optimization and retro aesthetics are highly prioritized during develepment process.
 
 # ⋮Compatibility⋮
-_Wire=world_ was best tested with Chrome 67 and [Electron](https://electronjs.org/), which was used to develop it.  
+_Wire=world_ was best tested with Chrome 67 and [Electron](https://electronjs.org/), which is used to develop it.  
 Mobile devices support is comming soon.
 
 # ⋮Brief sampling of logic power⋮
