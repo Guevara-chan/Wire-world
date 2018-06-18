@@ -19,7 +19,7 @@ class VisualAutomata extends Automata
 	# --Methods goes here.
 	constructor: (args...) ->
 		super ...args
-		try	@machine.ascii = @machine.storage
+		try	@ascii = @storage
 		catch e
 			midline = @height // 2 - 1
 			@set x, midline for x in [-10..10]
