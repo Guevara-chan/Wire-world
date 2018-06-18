@@ -7,4 +7,4 @@ _Wire=world_ was best tested with Chrome 67 and [Electron](https://electronjs.or
 Mobile devices support is comming soon.
 
 # ⋮Brief sampling of logic power⋮
-![image](https://user-images.githubusercontent.com/8768470/41507096-4c3c73e6-7234-11e8-9f09-e947060a5393.png)
+![image](https://user-images.githubusercontent.com/8768470/41536069-28249c7a-730d-11e8-92cc-5a905d54f874.png)
