@@ -102,7 +102,7 @@ class UI
 		@app	= new Phaser.Game
 			type: Phaser.AUTO, width: 900, height: 600, parent: 'vp'
 			scene: {preload: (-> self.scene = @), create: @create.bind(@), update: @update.bind(@)}
-			title: "Wire=world celluar automata.", version: "0.1"
+			title: "Wire=world celluar automata.", version: "0.02"
 		@machine = new VisualAutomata @app.canvas.width // init_scale, @app.canvas.height // init_scale, true
 		# Error handlers setup.
 		window.onerror = (msg, url, ln, col,e) ->

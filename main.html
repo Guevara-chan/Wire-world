@@ -8,8 +8,8 @@
 		<style>
 			@font-face {font-family: Roboto; src: url(res/3966.ttf)}
 
-			a {text-decoration: none; color: #DD8964; text-shadow: -1px -1px 2px black; font-style: italic; font-weight: bold;}
-			a:hover {text-shadow: 1px 1px 2px black, 0 0 1em gold; transition: .5s}
+			a {text-decoration: none; color: #e28964; text-shadow: 0px 0px 2px black; font-style: italic; font-weight: bold;}
+			a:hover {text-shadow: 0px 0px 3px orange, 0 0 1em red; transition: .5s}
 
 			div {text-shadow: 1px 1px 2px darkgrey; font-weight: bold;}
 
@@ -17,6 +17,7 @@
 			.reminder {position:absolute; margin: 0px 0px 0px 3px; border-width: 0px 2px 0px 0px; border-style: solid; border-color: black;}
 			.rreminder {border-width: 0px 0px 0px 2px;}
 			.mrem {display: inline-block}
+			.extrusion {background: #A21212; display:inline-block; border: 2px solid #AB0000; padding: 2px;}
 			.reminder:hover {color: linen; transition: .5s}
 			.mrem:hover {color: linen; transition: .5s}
 		</style>
@@ -27,7 +28,7 @@
 		<input id="loader" type="file" accept=".w=w,text/plain" style='position: absolute; top: -1000px'/>
 		<center style = "position: absolute; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); ">
 
-		<div style='background: darkred; display:inline-block; border-bottom: 3px dashed slategray; border-radius: 5px 5px 0px 0px; padding: 2px'>
+		<div class ="extrusion" style='border-bottom: 3px dashed slategray; border-radius: 5px 5px 0px 0px'>
 			🞇 <a href='http://github.com/Guevara-chan/Wire-world' target="_blank">Wire=world</a> cellular automata v0.02 🞇</div>
 		</div>
 
@@ -42,7 +43,7 @@
 			<div class='reminder rreminder' style="left: 81%"> Wheel to zoom & drag 🞇</div>
 			<div class='mrem'>Crtl+S to export / Ctrl+L to import</div>
 		</div>
-		<div style='background: darkred; display:inline-block; border-top: 3px dashed slategray; border-radius: 0px 0px 5px 5px; padding: 2px'>
+		<div class ="extrusion" style='border-top: 3px dashed slategray; border-radius: 0px 0px 5px 5px'>
 			🞇 Developed in 2018 by <a href='http://vk.com/guevara_chan' target="_blank">V.A. Guevara</a> 🞇</div>
 		</div>
 		</center>
