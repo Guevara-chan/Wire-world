@@ -9,17 +9,16 @@
 			@font-face {font-family: Roboto; src: url(res/3966.ttf)}
 
 			a {text-decoration: none; color: #e28964; text-shadow: -1px -1px 2px black; font-style: italic; font-weight: bold;}
-			a:hover {color: coral; text-shadow: 1px 1px 2px orange, 0 0 1em red; transition: .5s}
+			a:hover {color: coral; text-shadow: 0px 0px 2px orange, 0 0 1em red; transition: .5s}
 
 			div {text-shadow: 1px 1px 2px darkgrey; font-weight: bold;}
 
 			.winbar {background: slategray; padding: 0px 0px 1px 0px; font-family: Roboto; font-size: 14;}
+			.extrusion {background: #902010; display:inline-block; border: 1px solid #900030; padding: 2px;}
 			.reminder {position:absolute; margin: 0px 0px 0px 3px; border-width: 0px 2px 0px 0px; border-style: solid; border-color: black;}
 			.rreminder {border-width: 0px 0px 0px 2px;}
 			.mrem {display: inline-block}
-			.extrusion {background: #902010; display:inline-block; border: 1px solid #900030; padding: 2px;}
-			.reminder:hover {color: linen; transition: .5s}
-			.mrem:hover {color: linen; transition: .5s}
+			.reminder:hover, .mrem:hover {color: linen; transition: .5s}
 		</style>
 	</head>
 
@@ -35,7 +34,7 @@
 		<div class="winbar" style='border-radius: 5px 5px 0px 0px;'>
 			<div class='reminder'>🞇 LMB & RMB to modify </div>
 			<div class='reminder rreminder' style="left: 89%"> ESC to exit 🞇</div>
-			<div class='mrem'>Drop file over to import</div>
+			<d iv class='mrem'>Drop file inside matrix to import</div>
 		</div>
 		<div id='vp', style='border-width: 0px 1px 0px 1px; border-style: dashed; border-color: slategray'></div>
 		<div class="winbar" style="border-radius: 0px 0px 5px 5px;">

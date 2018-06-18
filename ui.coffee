@@ -139,10 +139,13 @@ class UI
 		@decor.lineStyle 1, 0x0000ff, .3
 		@tinformer	= infobar 20
 		@binformer	= infobar @vp.height - 20
+		@tinformer.setShadow(3, 3, 'rgba(255,255,255,0.5)', 5)
 		# Drag/drop setup.
-		document.addEventListener 'dragover', (e) =>
+		document.addEventListener 'dragover', (e) => e.preventDefault(); e.dataTransfer.dropEffect = 'none'
+		document.addEventListener 'drop', (e) => e.preventDefault()
+		@app.canvas.addEventListener 'dragover', (e) =>
 			e.stopPropagation(); e.preventDefault(); e.dataTransfer.dropEffect = 'copy'
-		document.addEventListener 'drop', @on.import, false
+		@app.canvas.addEventListener 'drop', @on.import, false
 		# Keyboard inputs.
 		@scene.input.keyboard.on "keydown_#{key}", @on[proc] for key, proc of {
 			ENTER:'toggle', DELETE:'clear', SPACE:'step',	ESC: 'exit',	PAGE_UP:'zoomin', PAGE_DOWN:'zoomout',
