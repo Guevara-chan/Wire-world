@@ -13,12 +13,22 @@ class VisualAutomata extends Automata
 	powered:	false
 	speed:		90
 	last_update: 0
-	_ascii_set =  " .@*"
+	_ascii_set	= " .@*"
+	_key		= "matrix_data"
 
 	# --Methods goes here.
 	constructor: (args...) ->
 		super ...args
+		try	@machine.ascii = @machine.storage
+		catch e
+			midline = @height // 2 - 1
+			@set x, midline for x in [-10..10]
+			@set 11, midline + 1
+			@set x, midline + 2 for x in [-10..10]
+			@set -10, midline, Cell.tail
+			@set -11, midline + 1, Cell.head
 		setInterval (-> @tick() if @powered and Date.now() - @last_update >= 400 - @speed * 4).bind(@), 10
+		setInterval (-> @storage = @ascii), 1000
 
 	morph: (x, y, shift = 1) ->
 		@set x, y, Cell.cycle @get(x, y), shift
@@ -35,6 +45,7 @@ class VisualAutomata extends Automata
 			for cell, x in row
 				c = [0x000022, 0xffff00, 0x00ffff, 0xff0000][cell] 
 				bmp[ptr++] = c>>16 & 255; bmp[ptr++] = c>>8 & 255; bmp[ptr++] = c & 255; bmp[ptr++] = 0xff
+		localStorage.setItem(_key, @ascii)
 		return @
 
 	tick: (args...) ->
@@ -42,8 +53,10 @@ class VisualAutomata extends Automata
 		super ...args
 
 	# --Properties goes here.
-	@getter 'ascii', ()	-> ((_ascii_set[cell] for cell in row).join '' for row in @cells).join '\n'
-	@setter 'ascii', (val) ->
+	@getter 'storage', ()		-> localStorage.getItem(_key)
+	@setter 'storage', (val)	-> localStorage.setItem(_key, val)
+	@getter 'ascii', ()			-> ((_ascii_set[cell] for cell in row).join '' for row in @cells).join '\n'
+	@setter 'ascii', (val)		->
 		val = val.replace /\r/g, ''
 		unless val.split('').find (char) -> not (char in _ascii_set or char in '\n')
 			height	= (val = val.split '\n').length
@@ -108,13 +121,6 @@ class UI
 		window.onerror = (msg, url, ln, col,e) ->
 			alert "#{e.toString()} !\nLine №#{ln}[#{col}], #{new URL(url).pathname}"
 			return true
-		# Some brief signaler.
-		midline =  @machine.height // 2 - 1
-		@machine.set x, midline for x in [-10..10]
-		@machine.set 11, midline + 1
-		@machine.set x, midline + 2 for x in [-10..10]
-		@machine.set -10, midline, Cell.tail
-		@machine.set -11, midline + 1, Cell.head
 
 	create:	() ->
 		# External UI setup.
