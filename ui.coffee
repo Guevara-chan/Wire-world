@@ -27,8 +27,10 @@ class VisualAutomata extends Automata
 			@set x, midline + 2 for x in [-10..10]
 			@set -10, midline, Cell.tail
 			@set -11, midline + 1, Cell.head
-		setInterval (-> @tick() if @powered and Date.now() - @last_update >= 400 - @speed * 4).bind(@), 10
 		setInterval (-> @storage = @ascii), 1000
+		setInterval (->	if @powered and Date.now() - @last_update >= 400 - 4 * Math.min @speed, 100
+			@tick(Math.ceil @speed / 100)
+			).bind(@), 10
 
 	morph: (x, y, shift = 1) ->
 		@set x, y, Cell.cycle @get(x, y), shift
@@ -188,19 +190,19 @@ class UI
 
 	# --Branching goes here.
 	@new_branch 'on',
-		toggle:	() -> @powered = not @powered;						@
-		clear:	() -> @machine.clear();								@
-		step:	() -> @machine.tick() unless @powered;				@
-		exit:	() -> window.close();								@
-		zoomin:	() -> @vp.zoom++ if @vp.zoom < 20;					@
-		zoomout:() -> @vp.zoom-- if @vp.zoom > 1;					@
-		haste:	() -> @speed += 10 if @speed < 100;					@
-		slow:	() -> @speed -= 10 if @speed > 10;					@
-		left:	() -> @vp.scrollX++ ;								@
-		right:	() -> @vp.scrollX-- ;								@
-		up:		() -> @vp.scrollY++ ;								@
-		down:	() -> @vp.scrollY-- ;								@
-		load:	() -> @loader.click();								@
+		toggle:	() -> @powered = not @powered;										@
+		clear:	() -> @machine.clear();												@
+		step:	() -> @machine.tick() unless @powered;								@
+		exit:	() -> window.close();												@
+		zoomin:	() -> @vp.zoom++ if @vp.zoom < 20;									@
+		zoomout:() -> @vp.zoom-- if @vp.zoom > 1;									@
+		haste:	() -> @speed += (@speed >= 100).either(100, 10) if @speed < 500;	@
+		slow:	() -> @speed -= (@speed >= 100).either(100, 10) if @speed > 10;		@
+		left:	() -> @vp.scrollX++ ;												@
+		right:	() -> @vp.scrollX-- ;												@
+		up:		() -> @vp.scrollY++ ;												@
+		down:	() -> @vp.scrollY-- ;												@
+		load:	() -> @loader.click();												@
 		save:	() -> 
 			console.log new Blob([@machine.ascii], {type: "text/plain;charset=utf-8"})
 			saveAs new Blob([@machine.ascii], {type: "text/plain;charset=utf-8"}),
