@@ -133,6 +133,10 @@ class UI
 		@decor.lineStyle 1, 0x0000ff, .3
 		@tinformer	= infobar 20
 		@binformer	= infobar @vp.height - 20
+		# Drag/drop setup.
+		document.addEventListener 'dragover', (e) =>
+			e.stopPropagation(); e.preventDefault(); e.dataTransfer.dropEffect = 'copy'
+		document.addEventListener 'drop', @on.import, false
 		# Keyboard inputs.
 		@scene.input.keyboard.on "keydown_#{key}", @on[proc] for key, proc of {
 			ENTER:'toggle', DELETE:'clear', SPACE:'step',	ESC: 'exit',	PAGE_UP:'zoomin', PAGE_DOWN:'zoomout',
@@ -194,7 +198,10 @@ class UI
 				"[#{@machine.width}x#{@machine.height}] matrix.w=w"
 			return @
 		import: (e) ->
-			if feed = e.target.files[0]
+			e.stopPropagation()
+			e.preventDefault()
+			e.feed = e.dataTransfer ? e.target
+			if feed = e.feed.files[0]
 				reader = new FileReader()
 				reader.onload = (e) => @machine.ascii = e.target.result
 				reader.readAsText feed
