@@ -117,10 +117,12 @@ class UI
 		@machine.set -11, midline + 1, Cell.head
 
 	create:	() ->
-		# Primary setup.
+		# External UI setup.
 		@vp			= new ViewPort(@scene, @machine)
 		@vp.zoom	= init_scale
-		# Pseudo-GUI setup.
+		@loader		= document.getElementById('loader')
+		@loader.addEventListener 'change', @on.import, false
+		# Internal UI setup.
 		infobar		= (y) =>
 			bar = @scene.add.text(@vp.width / 2, y, "{I am error}").setOrigin 0.5
 			y	= bar.y - bar.displayOriginY - 1
@@ -134,8 +136,12 @@ class UI
 		# Keyboard inputs.
 		@scene.input.keyboard.on "keydown_#{key}", @on[proc] for key, proc of {
 			ENTER:'toggle', DELETE:'clear', SPACE:'step',	ESC: 'exit',	PAGE_UP:'zoomin', PAGE_DOWN:'zoomout',
-			PLUS:'haste',	MINUS:'slow',	LEFT:'left',	RIGHT:'right',	UP:'up', DOWN:'down', S:"save", L:"load"
+			PLUS:'haste',	MINUS:'slow',	LEFT:'left',	RIGHT:'right',	UP:'up', DOWN:'down'
 		}
+		window.addEventListener "keydown", (event) =>
+			if event.ctrlKey then switch event.which
+				when 83 then @on.save()
+				when 76 then @on.load()
 		# Clipboard inputs.
 		window.addEventListener 'paste', (e) => @machine.ascii = e.clipboardData.getData 'Text'
 		window.addEventListener 'copy', (e) =>
@@ -169,23 +175,30 @@ class UI
 
 	# --Branching goes here.
 	@new_branch 'on',
-		toggle:	() -> @powered = not @powered;			@
-		clear:	() -> @machine.clear();					@
-		step:	() -> @machine.tick() unless @powered;	@
-		exit:	() -> window.close();					@
-		zoomin:	() -> @vp.zoom++ if @vp.zoom < 20;		@
-		zoomout:() -> @vp.zoom-- if @vp.zoom > 1;		@
-		haste:	() -> @speed += 10 if @speed < 100;		@
-		slow:	() -> @speed -= 10 if @speed > 10;		@
-		left:	() -> @vp.scrollX++ ;					@
-		right:	() -> @vp.scrollX-- ;					@
-		up:		() -> @vp.scrollY++ ;					@
-		down:	() -> @vp.scrollY-- ;					@
+		toggle:	() -> @powered = not @powered;						@
+		clear:	() -> @machine.clear();								@
+		step:	() -> @machine.tick() unless @powered;				@
+		exit:	() -> window.close();								@
+		zoomin:	() -> @vp.zoom++ if @vp.zoom < 20;					@
+		zoomout:() -> @vp.zoom-- if @vp.zoom > 1;					@
+		haste:	() -> @speed += 10 if @speed < 100;					@
+		slow:	() -> @speed -= 10 if @speed > 10;					@
+		left:	() -> @vp.scrollX++ ;								@
+		right:	() -> @vp.scrollX-- ;								@
+		up:		() -> @vp.scrollY++ ;								@
+		down:	() -> @vp.scrollY-- ;								@
+		load:	() -> @loader.click();								@
 		save:	() -> 
-			console.log saveAs new Blob([@machine.ascii], {type: "text/plain;charset=utf-8"}),
+			console.log new Blob([@machine.ascii], {type: "text/plain;charset=utf-8"})
+			saveAs new Blob([@machine.ascii], {type: "text/plain;charset=utf-8"}),
 				"[#{@machine.width}x#{@machine.height}] matrix.w=w"
 			return @
-		load:	() -> @
+		import: (e) ->
+			if feed = e.target.files[0]
+				reader = new FileReader()
+				reader.onload = (e) => @machine.ascii = e.target.result
+				reader.readAsText feed
+			return @
 		noop:	() -> @
 
 	# --Properties goes here.
