@@ -44,7 +44,7 @@ class VisualAutomata extends Automata
 				new_row.set(row[..width-1]) if row
 				new_row
 		throw new TypeError("invalid matrix data provided") unless height > 1 and width > 1
-		feeder = reshape(width, height) unless feeder
+		feeder = feeder ? reshape(width, height)
 		[@width, @height, @ticks, @cells] = [width, height, 0, feeder]
 		return @
 
@@ -73,43 +73,46 @@ class VisualAutomata extends Automata
 		@resize width, height, (Uint8Array.from (_ascii_set.indexOf cell for cell in row) for row in val)
 # -------------------- #
 class ViewPort
-	scroll = {x: 0, y: 0}
+	scroll	= {x: 0, y: 0}
+	zoom	= 0
 
 	# --Methods goes here.
 	constructor: (@scene, @machine) ->
 		[@width, @height]	= [@scene.cameras.main.width, @scene.cameras.main.height]
-		@sample				= @scene.textures.createCanvas 'smp', @machine.width, @machine.height
 		@output				= @scene.textures.createCanvas 'cvs', @machine.width, @machine.height
-		@proj				= @scene.add.image @width / 2, @height / 2, 'cvs'
+		@tiles				= []
 
 	pick: (screen_x, screen_y) ->
-		[(screen_x - @proj.x + @proj.displayOriginX * @zoom) // @zoom,
-		(screen_y - @proj.y + @proj.displayOriginY * @zoom) // @zoom]
+		[(screen_x - @tiles[0].x + @tiles[0].displayOriginX * @zoom) // @zoom,
+		(screen_y - @tiles[0].y + @tiles[0].displayOriginY * @zoom) // @zoom]
 
 	sync: () ->
-		# Primary rendering.		
-		@sample.setSize @machine.width, @machine.height
-		bmp = @sample.context.getImageData(0, 0, @machine.width, @machine.height)
+		# Primary rendering.
+		@output.setSize @machine.width, @machine.height
+		bmp = @output.context.getImageData(0, 0, @machine.width, @machine.height)
 		@machine.render bmp.data, @zoom
 		# Tiling render.
 		tiling = (full, part, corrector) =>
 			result = Math.max 1, 2 * Math.sign(corrector) + Math.ceil full / part
 			if result % 2 then result else result+1
-		xfactor = tiling(@width, @machine.width * @zoom, @scrollX)
-		yfactor = tiling(@height, @machine.height * @zoom, @scrollY)
-		@output.setSize @machine.width * xfactor, @machine.height * yfactor
-		for x in [0..xfactor]
-			@output.context.putImageData(bmp, x * @machine.width, y * @machine.height) for y in [0..yfactor]
+		xfactor = tiling(@width, @machine.width * @zoom, @scrollX) // 2
+		yfactor = tiling(@height, @machine.height * @zoom, @scrollY) // 2
+		@output.context.putImageData bmp, 0, 0
 		@output.refresh()
 		# Adjusting projection.
-		@proj.destroy()
-		@proj = @scene.add.image @width / 2 + @scrollX * @zoom, @height / 2 + @scrollY * @zoom, 'cvs'
-		.setScale(@zoom)
-		@proj.depth = -1
+		tile.destroy() for tile in @tiles
+		xstep = @zoom * @machine.width
+		ystep = @zoom * @machine.height
+		@tiles = []
+		for y in [-yfactor..yfactor]
+			for x in [-xfactor..xfactor]
+				@tiles.push tile = (@scene.add.image @width / 2 + x * xstep + @scrollX * @zoom,
+				@height / 2 + y * ystep + @scrollY * @zoom, 'cvs').setScale(@zoom)
+				tile.depth = -1
 
 	# --Properties goes here.
-	@getter 'zoom',	()			-> @proj.scaleX
-	@setter 'zoom',	(val)		-> @proj.setScale(val)
+	@getter 'zoom',	()			-> zoom
+	@setter 'zoom',	(val)		-> zoom = val
 	@getter 'scrollX', ()		-> scroll.x
 	@setter 'scrollX', (val)	-> scroll.x = val.wrap @machine.width
 	@getter 'scrollY', ()		-> scroll.y
@@ -197,7 +200,7 @@ class UI
 	update:	() ->
 		# Internal GUI render.
 		@tinformer.setText "Zoom: #{@vp.zoom}x [PgUp/PgDn] | Speed: #{@speed}% [+/-] |
-		#{@powered.either 'P', 'Unp'}owered [Enter]"
+		#{@powered.either 'P', 'Unp'}owered [Enter] / SX: #{@vp.scrollX}"
 		@binformer.setText "Matrix: #{@machine.width}x#{@machine.height} [Copy/Paste/Del] " +
 			@powered.either "#{['|', '/', '-', '\\'][(@machine.ticks // Math.ceil @speed / 100).wrap 4]}",
 			"| Cycle: 0x#{@machine.ticks.toString(16)} [Space]"
