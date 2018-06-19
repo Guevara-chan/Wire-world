@@ -129,7 +129,8 @@ class UI
 			title: "Wire=world celluar automata.", version: "0.02"
 		@machine = new VisualAutomata @app.canvas.width // init_scale, @app.canvas.height // init_scale, true
 		# Error handlers setup.
-		window.onerror = (msg, url, ln, col,e) ->
+		window.onerror = (msg, url, ln, col, e) ->
+			console.error e
 			alert "#{e.toString()} !\nLine №#{ln}[#{col}], #{new URL(url).pathname}"
 			return true
 
