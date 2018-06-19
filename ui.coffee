@@ -170,8 +170,10 @@ class UI
 		}
 		document.addEventListener "keydown", (event) =>
 			if event.ctrlKey then switch event.which
-				when 83 then @on.save(); event.preventDefault(); return false
-				when 76 then @on.load(); event.preventDefault(); return false
+				when 83 then @on.save()
+				when 76 then @on.load()
+				else return
+			event.preventDefault(); return false
 		# Clipboard inputs.
 		document.addEventListener 'paste', (e) => @machine.ascii = e.clipboardData.getData 'Text'
 		document.addEventListener 'copy', (e) =>
