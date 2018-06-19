@@ -171,6 +171,8 @@ class UI
 			if event.ctrlKey then switch event.which
 				when 83 then @on.save()
 				when 76 then @on.load()
+			event.stopPropagation()
+			event.cancelBubble = true
 		# Clipboard inputs.
 		@app.canvas.addEventListener 'paste', (e) => @machine.ascii = e.clipboardData.getData 'Text'
 		@app.canvas.addEventListener 'copy', (e) =>
@@ -202,7 +204,6 @@ class UI
 			"| Cycle: 0x#{@machine.ticks.toString(16)} [Space]"
 		# VP render.
 		@vp.sync()
-		@app.canvas.focus()
 
 	# --Branching goes here.
 	@new_branch 'on',
