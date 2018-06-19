@@ -173,8 +173,8 @@ class UI
 				when 83 then @on.save(); event.preventDefault()
 				when 76 then @on.load(); event.preventDefault()
 		# Clipboard inputs.
-		@app.canvas.addEventListener 'paste', (e) => @machine.ascii = e.clipboardData.getData 'Text'
-		@app.canvas.addEventListener 'copy', (e) =>
+		window.addEventListener 'paste', (e) => @machine.ascii = e.clipboardData.getData 'Text'
+		window.addEventListener 'copy', (e) =>
 			e.clipboardData.setData('text/plain', @machine.ascii)
 			e.preventDefault()
 		# Mouse inputs.
