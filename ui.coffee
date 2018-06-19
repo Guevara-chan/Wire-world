@@ -168,13 +168,13 @@ class UI
 			ENTER:'toggle', DELETE:'clear', SPACE:'step',	ESC: 'exit',	PAGE_UP:'zoomin', PAGE_DOWN:'zoomout',
 			PLUS:'haste',	MINUS:'slow',	LEFT:'left',	RIGHT:'right',	UP:'up', DOWN:'down'
 		}
-		window.addEventListener "keydown", (event) =>
+		document.addEventListener "keydown", (event) =>
 			if event.ctrlKey then switch event.which
-				when 83 then @on.save(); event.preventDefault()
-				when 76 then @on.load(); event.preventDefault()
+				when 83 then @on.save(); event.preventDefault(); return false
+				when 76 then @on.load(); event.preventDefault(); return false
 		# Clipboard inputs.
-		window.addEventListener 'paste', (e) => @machine.ascii = e.clipboardData.getData 'Text'
-		window.addEventListener 'copy', (e) =>
+		document.addEventListener 'paste', (e) => @machine.ascii = e.clipboardData.getData 'Text'
+		document.addEventListener 'copy', (e) =>
 			e.clipboardData.setData('text/plain', @machine.ascii)
 			e.preventDefault()
 		# Mouse inputs.
