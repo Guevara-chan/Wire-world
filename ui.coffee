@@ -169,10 +169,8 @@ class UI
 		}
 		window.addEventListener "keydown", (event) =>
 			if event.ctrlKey then switch event.which
-				when 83 then @on.save()
-				when 76 then @on.load()
-			event.stopPropagation()
-			event.cancelBubble = true
+				when 83 then @on.save(); event.preventDefault()
+				when 76 then @on.load(); event.preventDefault()
 		# Clipboard inputs.
 		@app.canvas.addEventListener 'paste', (e) => @machine.ascii = e.clipboardData.getData 'Text'
 		@app.canvas.addEventListener 'copy', (e) =>
