@@ -36,8 +36,15 @@ class VisualAutomata extends Automata
 		@set x, y, Cell.cycle @get(x, y), shift
 		return @
 
-	resize: (width, height, feeder = @clear()) ->
+	resize: (width, height, feeder) ->
+		reshape = (width, height) =>
+			@cells.length = height
+			@cells = for row in @cells
+				new_row = new Uint8Array(width)
+				new_row.set(row[..width-1]) if row
+				new_row
 		throw new TypeError("invalid matrix data provided") unless height > 1 and width > 1
+		feeder = reshape(width, height) unless feeder
 		[@width, @height, @ticks, @cells] = [width, height, 0, feeder]
 		return @
 
@@ -71,6 +78,7 @@ class ViewPort
 	# --Methods goes here.
 	constructor: (@scene, @machine) ->
 		[@width, @height]	= [@scene.cameras.main.width, @scene.cameras.main.height]
+		@sample				= @scene.textures.createCanvas 'smp', @machine.width, @machine.height
 		@output				= @scene.textures.createCanvas 'cvs', @machine.width, @machine.height
 		@proj				= @scene.add.image @width / 2, @height / 2, 'cvs'
 
@@ -79,8 +87,9 @@ class ViewPort
 		(screen_y - @proj.y + @proj.displayOriginY * @zoom) // @zoom]
 
 	sync: () ->
-		# Primary rendering.
-		bmp = @output.context.getImageData(0, 0, @machine.width, @machine.height)
+		# Primary rendering.		
+		@sample.setSize @machine.width, @machine.height
+		bmp = @sample.context.getImageData(0, 0, @machine.width, @machine.height)
 		@machine.render bmp.data, @zoom
 		# Tiling render.
 		tiling = (full, part, corrector) =>
@@ -129,7 +138,13 @@ class UI
 		@vp			= new ViewPort(@scene, @machine)
 		@vp.zoom	= init_scale
 		@loader		= document.getElementById('loader')
-		@loader.addEventListener 'change', @on.import, false
+		@loader.addEventListener 'change', @on.import
+		@meters		= {}
+		# Experiment.
+		for metrics in ['width', 'height']
+			@meters[metrics] = document.getElementById metrics
+			@meters[metrics].addEventListener 'change', @on.resize
+		@meters[metrics].value = @machine[metrics] for metrics in ["width", "height"]
 		# Internal UI setup.
 		infobar		= (y) =>
 			bar = @scene.add.text(@vp.width / 2, y, "{I am error}").setOrigin 0.5
@@ -141,13 +156,12 @@ class UI
 		@decor.lineStyle 1, 0x0000ff, .3
 		@tinformer	= infobar 20
 		@binformer	= infobar @vp.height - 20
-		@tinformer.setShadow(3, 3, 'rgba(255,255,255,0.5)', 5)
 		# Drag/drop setup.
 		document.addEventListener 'dragover', (e) => e.preventDefault(); e.dataTransfer.dropEffect = 'none'
 		document.addEventListener 'drop', (e) => e.preventDefault()
 		@app.canvas.addEventListener 'dragover', (e) =>
 			e.stopPropagation(); e.preventDefault(); e.dataTransfer.dropEffect = 'copy'
-		@app.canvas.addEventListener 'drop', @on.import, false
+		@app.canvas.addEventListener 'drop', @on.import
 		# Keyboard inputs.
 		@scene.input.keyboard.on "keydown_#{key}", @on[proc] for key, proc of {
 			ENTER:'toggle', DELETE:'clear', SPACE:'step',	ESC: 'exit',	PAGE_UP:'zoomin', PAGE_DOWN:'zoomout',
@@ -158,13 +172,13 @@ class UI
 				when 83 then @on.save()
 				when 76 then @on.load()
 		# Clipboard inputs.
-		window.addEventListener 'paste', (e) => @machine.ascii = e.clipboardData.getData 'Text'
-		window.addEventListener 'copy', (e) =>
+		@app.canvas.addEventListener 'paste', (e) => @machine.ascii = e.clipboardData.getData 'Text'
+		@app.canvas.addEventListener 'copy', (e) =>
 			e.clipboardData.setData('text/plain', @machine.ascii)
 			e.preventDefault()
 		# Mouse inputs.
 		scroll_lock = (feed) -> scrolling = if feed then {x: feed.x, y: feed.y} else false
-		window.addEventListener "wheel", (e) => @on[['zoomin', 'noop', 'zoomout'][1 + Math.sign e.deltaY]]()
+		@app.canvas.addEventListener "wheel", (e) => @on[['zoomin', 'noop', 'zoomout'][1 + Math.sign e.deltaY]]()
 		@scene.input.on 'pointerup', ((ptr) => scroll_lock() if ptr.buttons > 2), ui
 		@scene.input.on 'pointerdown', ((ptr) ->
 			switch ptr.buttons
@@ -180,13 +194,15 @@ class UI
 			), ui
 
 	update:	() ->
-		# GUI render.
+		# Internal GUI render.
 		@tinformer.setText "Zoom: #{@vp.zoom}x [PgUp/PgDn] | Speed: #{@speed}% [+/-] |
 		#{@powered.either 'P', 'Unp'}owered [Enter]"
-		@binformer.setText "Matrix: #{@machine.width}x#{@machine.height} [Copy/Paste/Del]" +
-			@powered.either "", " | Cycle: 0x#{@machine.ticks.toString(16)} [Space]"
+		@binformer.setText "Matrix: #{@machine.width}x#{@machine.height} [Copy/Paste/Del] " +
+			@powered.either "#{['|', '/', '-', '\\'][(@machine.ticks // Math.ceil @speed / 100).wrap 4]}",
+			"| Cycle: 0x#{@machine.ticks.toString(16)} [Space]"
 		# VP render.
 		@vp.sync()
+		@app.canvas.focus()
 
 	# --Branching goes here.
 	@new_branch 'on',
@@ -197,14 +213,14 @@ class UI
 		zoomin:	() -> @vp.zoom++ if @vp.zoom < 20;									@
 		zoomout:() -> @vp.zoom-- if @vp.zoom > 1;									@
 		haste:	() -> @speed += (@speed >= 100).either(100, 10) if @speed < 500;	@
-		slow:	() -> @speed -= (@speed >= 100).either(100, 10) if @speed > 10;		@
+		slow:	() -> @speed -= (@speed >= 200).either(100, 10) if @speed > 10;		@
+		resize:	() -> @machine.resize @meters.width.value, @meters.height.value;	@ # REMOVE ME LATER !
 		left:	() -> @vp.scrollX++ ;												@
 		right:	() -> @vp.scrollX-- ;												@
 		up:		() -> @vp.scrollY++ ;												@
 		down:	() -> @vp.scrollY-- ;												@
 		load:	() -> @loader.click();												@
 		save:	() -> 
-			console.log new Blob([@machine.ascii], {type: "text/plain;charset=utf-8"})
 			saveAs new Blob([@machine.ascii], {type: "text/plain;charset=utf-8"}),
 				"[#{@machine.width}x#{@machine.height}] matrix.w=w"
 			return @
