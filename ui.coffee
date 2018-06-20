@@ -43,7 +43,7 @@ class VisualAutomata extends Automata
 				new_row = new Uint8Array(width)
 				new_row.set(row[..width-1]) if row
 				new_row
-		throw new TypeError("invalid matrix data provided") unless height > 1 and width > 1
+		throw new TypeError("invalid matrix data provided") unless height > 9 and width > 9
 		feeder = feeder ? reshape(width, height)
 		[@width, @height, @ticks, @cells] = [width, height, 0, feeder]
 		return @
@@ -91,19 +91,18 @@ class ViewPort
 		@output.setSize @machine.width, @machine.height
 		bmp = @output.context.getImageData(0, 0, @machine.width, @machine.height)
 		@machine.render bmp.data, @zoom
-		# Tiling render.
+		@output.context.putImageData bmp, 0, 0
+		@output.refresh()
+		# Tiling calculation.
 		tiling = (full, part, corrector) =>
 			result = Math.max 1, 2 * Math.sign(corrector) + Math.ceil full / part
 			if result % 2 then result else result+1
 		xfactor = tiling(@width, @machine.width * @zoom, @scrollX) // 2
 		yfactor = tiling(@height, @machine.height * @zoom, @scrollY) // 2
-		@output.context.putImageData bmp, 0, 0
-		@output.refresh()
-		# Adjusting projection.
-		tile.destroy() for tile in @tiles
 		xstep = @zoom * @machine.width
 		ystep = @zoom * @machine.height
-		@tiles = []
+		# Tiling fit in.
+		tile.destroy() while tile = @tiles.pop()
 		for y in [-yfactor..yfactor]
 			for x in [-xfactor..xfactor]
 				@tiles.push tile = (@scene.add.image @width / 2 + x * xstep + @scrollX * @zoom,
@@ -143,12 +142,6 @@ class UI
 		@vp.zoom	= init_scale
 		@loader		= document.getElementById('loader')
 		@loader.addEventListener 'change', @on.import
-		@meters		= {}
-		# Experiment.
-		for metrics in ['width', 'height']
-			@meters[metrics] = document.getElementById metrics
-			@meters[metrics].addEventListener 'change', @on.resize
-		@meters[metrics].value = @machine[metrics] for metrics in ["width", "height"]
 		# Internal UI setup.
 		infobar		= (y) =>
 			bar = @scene.add.text(@vp.width / 2, y, "{I am error}").setOrigin 0.5
@@ -200,7 +193,7 @@ class UI
 	update:	() ->
 		# Internal GUI render.
 		@tinformer.setText "Zoom: #{@vp.zoom}x [PgUp/PgDn] | Speed: #{@speed}% [+/-] |
-		#{@powered.either 'P', 'Unp'}owered [Enter] / SX: #{@vp.scrollX}"
+		#{@powered.either 'P', 'Unp'}owered [Enter]"
 		@binformer.setText "Matrix: #{@machine.width}x#{@machine.height} [Copy/Paste/Del] " +
 			@powered.either "#{['|', '/', '-', '\\'][(@machine.ticks // Math.ceil @speed / 100).wrap 4]}",
 			"| Cycle: 0x#{@machine.ticks.toString(16)} [Space]"
@@ -217,7 +210,6 @@ class UI
 		zoomout:() -> @vp.zoom-- if @vp.zoom > 1;									@
 		haste:	() -> @speed += (@speed >= 100).either(100, 10) if @speed < 500;	@
 		slow:	() -> @speed -= (@speed >= 200).either(100, 10) if @speed > 10;		@
-		resize:	() -> @machine.resize @meters.width.value, @meters.height.value;	@ # REMOVE ME LATER !
 		left:	() -> @vp.scrollX++ ;												@
 		right:	() -> @vp.scrollX-- ;												@
 		up:		() -> @vp.scrollY++ ;												@
