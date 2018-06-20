@@ -43,10 +43,16 @@ class VisualAutomata extends Automata
 				new_row = new Uint8Array(width)
 				new_row.set(row[..width-1]) if row
 				new_row
-		throw new TypeError("invalid matrix data provided") unless height > 9 and width > 9
+		throw new TypeError("invalid matrix data provided") unless height > 2 and width > 2
 		feeder = feeder ? reshape(width, height)
 		[@width, @height, @ticks, @cells] = [width, height, 0, feeder]
+		# TO BE REFACTORED
+		ui?.vp.scrollX = ui.vp.scrollX
+		ui?.vp.scrollY = ui.vp.scrollY
 		return @
+
+	resize_ex: (wmod = 0, hmod = 0) ->
+		@resize @width + wmod, @height + hmod
 
 	render: (bmp, scale = 1) ->
 		ptr	= 0
@@ -128,7 +134,7 @@ class UI
 		@app	= new Phaser.Game
 			type: Phaser.AUTO, width: 900, height: 600, parent: 'vp'
 			scene: {preload: (-> self.scene = @), create: @create.bind(@), update: @update.bind(@)}
-			title: "Wire=world celluar automata.", version: "0.02"
+			title: "Wire=world cellular automata.", version: "0.03"
 		@machine = new VisualAutomata @app.canvas.width // init_scale, @app.canvas.height // init_scale, true
 		# Error handlers setup.
 		window.onerror = (msg, url, ln, col, e) ->
@@ -142,6 +148,14 @@ class UI
 		@vp.zoom	= init_scale
 		@loader		= document.getElementById('loader')
 		@loader.addEventListener 'change', @on.import
+		@meters = {}
+		for metric in ['width', 'height']
+			parse = (id, spec1 = '', spec2 = '') => @meters[id + spec1] = document.getElementById id + spec2
+			parse metric
+			parse metric, "_inc", "+"
+			parse metric, "_dec", "-"
+			@meters["#{metric}_inc"].addEventListener 'mousedown', @on["inc#{metric}"]
+			@meters["#{metric}_dec"].addEventListener 'mousedown', @on["dec#{metric}"]
 		# Internal UI setup.
 		infobar		= (y) =>
 			bar = @scene.add.text(@vp.width / 2, y, "{I am error}").setOrigin 0.5
@@ -197,25 +211,31 @@ class UI
 		@binformer.setText "Matrix: #{@machine.width}x#{@machine.height} [Copy/Paste/Del] " +
 			@powered.either "#{['|', '/', '-', '\\'][(@machine.ticks // Math.ceil @speed / 100).wrap 4]}",
 			"| Cycle: 0x#{@machine.ticks.toString(16)} [Space]"
+		# External GUI render.
+		@meters[metric].innerText = @machine[metric] for metric in ['width', 'height']
 		# VP render.
 		@vp.sync()
 
 	# --Branching goes here.
 	@new_branch 'on',
-		toggle:	() -> @powered = not @powered;										@
-		clear:	() -> @machine.clear();												@
-		step:	() -> @machine.tick() unless @powered;								@
-		exit:	() -> window.close();												@
-		zoomin:	() -> @vp.zoom++ if @vp.zoom < 20;									@
-		zoomout:() -> @vp.zoom-- if @vp.zoom > 1;									@
-		haste:	() -> @speed += (@speed >= 100).either(100, 10) if @speed < 500;	@
-		slow:	() -> @speed -= (@speed >= 200).either(100, 10) if @speed > 10;		@
-		left:	() -> @vp.scrollX++ ;												@
-		right:	() -> @vp.scrollX-- ;												@
-		up:		() -> @vp.scrollY++ ;												@
-		down:	() -> @vp.scrollY-- ;												@
-		load:	() -> @loader.click();												@
-		save:	() -> 
+		toggle:		() -> @powered = not @powered;										@
+		clear:		() -> @machine.clear();												@
+		step:		() -> @machine.tick() unless @powered;								@
+		exit:		() -> window.close();												@
+		zoomin:		() -> @vp.zoom++ if @vp.zoom < 20;									@
+		zoomout:	() -> @vp.zoom-- if @vp.zoom > 1;									@
+		haste:		() -> @speed += (@speed >= 100).either(100, 10) if @speed < 500;	@
+		slow:		() -> @speed -= (@speed >= 200).either(100, 10) if @speed > 10;		@
+		left:		() -> @vp.scrollX++ ;												@
+		right:		() -> @vp.scrollX-- ;												@
+		up:			() -> @vp.scrollY++ ;												@
+		down:		() -> @vp.scrollY-- ;												@
+		incwidth:	() -> @machine.resize_ex(1, 0);										@
+		decwidth:	() -> @machine.resize_ex(-1, 0) if @machine.width >= 10;			@
+		incheight:	() -> @machine.resize_ex(0, 1);										@
+		decheight:	() -> @machine.resize_ex(0, -1) if @machine.height >= 10;			@
+		load:		() -> @loader.click();												@
+		save:		() -> 
 			saveAs new Blob([@machine.ascii], {type: "text/plain;charset=utf-8"}),
 				"[#{@machine.width}x#{@machine.height}] matrix.w=w"
 			return @
@@ -228,7 +248,7 @@ class UI
 				reader.onload = (e) => @machine.ascii = e.target.result
 				reader.readAsText feed
 			return @
-		noop:	() -> @
+		noop: () -> @
 
 	# --Properties goes here.
 	@getter 'speed', ()			-> @machine.speed
