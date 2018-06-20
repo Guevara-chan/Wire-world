@@ -46,9 +46,6 @@ class VisualAutomata extends Automata
 		throw new TypeError("invalid matrix data provided") unless height > 2 and width > 2
 		feeder = feeder ? reshape(width, height)
 		[@width, @height, @ticks, @cells] = [width, height, 0, feeder]
-		# TO BE REFACTORED
-		ui?.vp.scrollX = ui.vp.scrollX
-		ui?.vp.scrollY = ui.vp.scrollY
 		return @
 
 	resize_ex: (wmod = 0, hmod = 0) ->
@@ -103,6 +100,7 @@ class ViewPort
 		tiling = (full, part, corrector) =>
 			result = Math.max 1, 2 * Math.sign(corrector) + Math.ceil full / part
 			if result % 2 then result else result+1
+		[@scrollX, @scrollY] = [@scrollX, @scrollY]
 		xfactor = tiling(@width, @machine.width * @zoom, @scrollX) // 2
 		yfactor = tiling(@height, @machine.height * @zoom, @scrollY) // 2
 		xstep = @zoom * @machine.width
