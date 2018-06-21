@@ -203,6 +203,8 @@ class UI
 					@vp["scroll#{coord.toUpperCase()}"] += (ptr[coord]-scrolling[coord]) // (1+Math.log2 @vp.zoom)
 				scroll_lock ptr
 			), ui
+		# Making UI visible.
+		document.getElementById('ui').style.visibility = 'visible'
 
 	update:	() ->
 		# Internal GUI render.
