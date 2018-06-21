@@ -94,6 +94,7 @@ class ViewPort
 
 	sync: () ->
 		# Primary rendering.
+		@output.context.canvas[metric] = @machine[metric] for metric in ['width', 'height']
 		@output.setSize @machine.width, @machine.height
 		bmp = @output.context.getImageData(0, 0, @machine.width, @machine.height)
 		@machine.render bmp.data, @zoom
@@ -153,7 +154,7 @@ class UI
 		for metric in ['width', 'height']
 			parse = (id, sub = '') => @meters[id + sub] = document.getElementById id + sub
 			parse metric
-			parse(metric, "_#{sub}").addEventListener 'mousedown', @on["#{sub}#{metric}"] for sub in ['dec', 'inc']				
+			parse(metric, "_#{sub}").addEventListener 'mousedown', @on["#{sub}#{metric}"]	for sub in ['dec', 'inc']
 		# Internal UI setup.
 		infobar		= (y) =>
 			bar = @scene.add.text(@vp.width / 2, y, "{I am error}").setOrigin 0.5
@@ -198,8 +199,8 @@ class UI
 			@machine.morph ...(@vp.pick ptr.x, ptr.y), shift), ui
 		@scene.input.on 'pointermove', ((ptr) ->
 			if scrolling
-				@vp.scrollX += (ptr.x - scrolling.x) // @vp.zoom
-				@vp.scrollY += (ptr.y - scrolling.y) // @vp.zoom
+				for coord in ['x', 'y']
+					@vp["scroll#{coord.toUpperCase()}"] += (ptr[coord]-scrolling[coord]) // (1+Math.log2 @vp.zoom)
 				scroll_lock ptr
 			), ui
 
