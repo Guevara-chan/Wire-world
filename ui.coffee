@@ -82,7 +82,7 @@ class ViewPort
 	# --Methods goes here.
 	constructor: (@scene, @machine) ->
 		[@width, @height]	= [@scene.cameras.main.width, @scene.cameras.main.height]
-		@output				= @scene.textures.createCanvas 'cvs', @machine.width, @machine.height
+		@output				= @scene.textures.createCanvas 'cvs', 0, 0
 		@tiles				= []
 
 	pick: (screen_x, screen_y) ->
