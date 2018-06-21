@@ -249,6 +249,7 @@ class UI
 				reader = new FileReader()
 				reader.onload = (e) => @machine.ascii = e.target.result
 				reader.readAsText feed
+				@loader.value = ''
 			return @
 		noop: () -> @
 
