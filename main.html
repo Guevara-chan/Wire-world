@@ -9,6 +9,7 @@
 		<style>
 			@font-face {font-family: Roboto; src: url(res/3966.ttf)}
 
+			all {transition: .5s}
 			a {text-decoration: none; color: #e28964; text-shadow: -1px -1px 2px black; font-style: italic; font-weight: bold;}
 			a:hover {color: coral; text-shadow: 0px 0px 2px orange, 0 0 1em red; transition: .5s}
 
@@ -25,9 +26,11 @@
 			.counter {font-size: 14px} 
 			.ctrl {cursor: pointer; text-shadow: 0px 0px 2px coral}
 			.ctrl:hover {color: khaki; text-shadow: 0px 0px 2px crimson, 0 0 1em red; transition: .5s}
-			.counter:hover{color: lemonchiffon; transition: all .5s; text-shadow: 0px 0px 2px black, 0 0 1em gold}
+			.counter:hover {color: lemonchiffon; transition: all .5s; text-shadow: 0px 0px 2px black, 0 0 1em gold}
 
-			@-moz-document url-prefix() { .reminder {margin-top: -1px}}
+			@-moz-document url-prefix() {
+			.reminder {margin-top: -1px}
+			}
 		</style>
 	</head>
 
@@ -56,7 +59,7 @@
 		<div oncontextmenu='return false;' id='vp' style='border-width: 0px 1px 0px 1px; border-style: dashed; border-color: slategray'></div>
 
 		<div class='ctrlpad' style="left: 68%; border-radius: 0px 0px 5px 5px; border-top: 0px; margin-top: -4px;">
-			<div id="height" class="counter" style="border-bottom: 1px solid #000022; padding-top: 2px; padding-bottom: 2px"></div>
+			<div id="height" class="counter" style="border-bottom: 1px solid #000022; padding-top: 4px; padding-bottom: 2px"></div>
 			<div id="height_dec" class="ctrl">▼</div>
 			<div class="mrem">height</div>
 			<div id="height_inc" class="ctrl">▲</div>
