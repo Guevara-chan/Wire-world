@@ -165,7 +165,7 @@ class UI
 		@decor.lineStyle 1, 0x0000ff, .3
 		@tinformer	= infobar 20
 		@binformer	= infobar @vp.height - 20
-		@[tgt].setShadow(1, 1, 'lightsteelblue', .5, true) for tgt in ['tinformer', 'binformer']		
+		@[tgt].setShadow(1, 1, 'darkcyan', .5, true) for tgt in ['tinformer', 'binformer']		
 		# Drag/drop setup.
 		document.addEventListener 'dragover', (e) => e.preventDefault(); e.dataTransfer.dropEffect = 'none'
 		document.addEventListener 'drop', (e) => e.preventDefault()
