@@ -86,6 +86,9 @@ class ViewPort
 		@tiles				= []
 
 	pick: (screen_x, screen_y) ->
+		console.log [(screen_x - @tiles[0].x + @tiles[0].displayOriginX * @zoom) // @zoom,
+			(screen_y - @tiles[0].y + @tiles[0].displayOriginY * @zoom) // @zoom]
+
 		[(screen_x - @tiles[0].x + @tiles[0].displayOriginX * @zoom) // @zoom,
 		(screen_y - @tiles[0].y + @tiles[0].displayOriginY * @zoom) // @zoom]
 
@@ -148,12 +151,9 @@ class UI
 		@loader.addEventListener 'change', @on.import
 		@meters = {}
 		for metric in ['width', 'height']
-			parse = (id, spec1 = '', spec2 = '') => @meters[id + spec1] = document.getElementById id + spec2
+			parse = (id, sub = '') => @meters[id + sub] = document.getElementById id + sub
 			parse metric
-			parse metric, "_inc", "+"
-			parse metric, "_dec", "-"
-			@meters["#{metric}_inc"].addEventListener 'mousedown', @on["inc#{metric}"]
-			@meters["#{metric}_dec"].addEventListener 'mousedown', @on["dec#{metric}"]
+			parse(metric, "_#{sub}").addEventListener 'mousedown', @on["#{sub}#{metric}"] for sub in ['dec', 'inc']				
 		# Internal UI setup.
 		infobar		= (y) =>
 			bar = @scene.add.text(@vp.width / 2, y, "{I am error}").setOrigin 0.5
