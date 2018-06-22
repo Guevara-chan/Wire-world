@@ -1,4 +1,4 @@
-# ~Wireworld visual simulator.
+﻿# ~Wireworld visual simulator.
 # ==Extnesion methods==
 Function::getter = (name, proc)	-> Object.defineProperty @prototype, name, {get: proc, configurable: true}
 Function::setter = (name, proc)	-> Object.defineProperty @prototype, name, {set: proc, configurable: true}
@@ -239,7 +239,7 @@ class UI
 		load:		() -> @loader.click();												@
 		save:		() -> 
 			saveAs new Blob([@machine.ascii], {type: "text/plain;charset=utf-8"}),
-				"[#{@machine.width}x#{@machine.height}] matrix.w=w"
+				(@last_save ? "[#{@machine.width}x#{@machine.height}] matrix.w=w")
 			return @
 		import: (e) ->
 			e.stopPropagation()
@@ -249,7 +249,7 @@ class UI
 				reader = new FileReader()
 				reader.onload = (e) => @machine.ascii = e.target.result
 				reader.readAsText feed
-				@loader.value = ''
+				[@last_save, @loader.value] = [@loader.value.split('\\')[-1..][0], ''] if @loader.value
 			return @
 		noop: () -> @
 
