@@ -4,9 +4,9 @@ Optimization and retro aesthetics are highly prioritized during develepment proc
 
 # ⋮Featuræ⋮
 * Vintage pixel-perfect GUI.
-* Import/export to local files.
 * Edge-wrapped field geometry.
 * Matrix persistance between sessions.
+* Easy import & export to own text-based format.
 * 90% of functionality cowered by keyboard hotkeys.
 
 # ⋮Compatibility⋮
