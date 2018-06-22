@@ -4,10 +4,10 @@ Optimization and retro aesthetics are highly prioritized during develepment proc
 
 # ⋮Featuræ⋮
 * Vintage pixel-perfect GUI.
-* Edge-wrapped field geometry.
 * Import/export to local files.
+* Edge-wrapped field geometry.
 * Matrix persistance between sessions.
-* 90% of functional cowered by keyboard hotkeys.
+* 90% of functionality cowered by keyboard hotkeys.
 
 # ⋮Compatibility⋮
 _Wire=world_ was best tested with Chrome 67 and [Electron](https://electronjs.org/), which is used to develop it.  
