@@ -22,7 +22,7 @@
 			.mrem, .ctrl {display: inline-block}
 			.reminder:hover, .mrem:hover {color: linen; transition: .5s}
 
-			.extrusion {background: #902010; display:inline-block; border: 1px solid #900030}
+			.extrusion {background: #902010; display:inline-block; border: 1px solid #900030; padding: 2px;}
 			.ctrlpad {position:absolute; background: #677787; height: 43px; border-radius: 5px 5px 0px 0px; border: 2px solid #000022; padding: 0px 2px; font-family: Roboto; font-size: 15px}
 			.counter {font-size: 14px} 
 			.ctrl {cursor: pointer; text-shadow: 0px 0px 2px coral}
@@ -35,29 +35,33 @@
 			.toppad {top: 2.5px}
 			.botpad {bottom: 6.5px}
 			}
+
+			@supports (-ms-ime-align: auto) {
+			b {font-family: "Segoe UI Symbol"}
+			}
 		</style>
 	</head>
 
-	<body style='margin:0; background: #0f0f0f -webkit-repeating-linear-gradient(top, transparent 0px, transparent 1px, rgba(0, 0, 0, 0.25)	1px, rgba(0, 0, 0, 0.25) 2px); -webkit-background-size: 100% 2px; overflow: hidden; user-select: none; -moz-user-select: none; -ms-user-select: none'>
+	<body style='margin:0; background: #0f0f0f -webkit-repeating-linear-gradient(top, transparent 0px, transparent 1px, rgba(0, 0, 0, 0.25)	1px, rgba(0, 0, 0, 0.25) 2px); -webkit-background-size: 100% 2px; overflow: hidden; user-select: none; -moz-user-select: none; -ms-user-select: none;'>
 
 		<input id="loader" type="file" accept=".w=w,text/plain" style='position: absolute; top: -1000px'/>
 		<center class="centerer" style="color: coral; font-size: 65px; text-shadow: 0px 0px 7px lightsalmon">..:Now loading:..</center>
 
 		<center id="ui" class="centerer" style="visibility: hidden;">
-		<div class='ctrlpad toppad' style = "left: 22.8%; margin-top: 4px; border-bottom: 0px">
-			<div id="width_dec" class="ctrl" style="top:-10%">◀</div>
+		<div class='ctrlpad toppad' style = "left: 22.8%; border-bottom: 0px">
+			<div id="width_dec" class="ctrl"><b>◀</b></div>
 			<div class="mrem">width</div>
-			<div id="width_inc" class="ctrl">▶</div>
+			<div id="width_inc" class="ctrl"><b>▶</b></div>
 			<div id="width" class="counter" style="border-top: 1px solid #000022; padding-top: 2px; padding-bottom: 3px"></div>
 		</div>
 
 		<div class ="extrusion" style='border-bottom: 3px dashed slategray; border-radius: 5px 5px 0px 0px;'>
-			🞇 <a href='http://github.com/Guevara-chan/Wire-world' target="_blank">Wire=world</a> cellular automata v0.03 🞇</div>
+			<b>🞇</b> <a href='http://github.com/Guevara-chan/Wire-world' target="_blank">Wire=world</a> cellular automata v0.03 <b>🞇</b></div>
 		</div>
 
 		<div class="winbar" style='border-radius: 5px 5px 0px 0px;'>
-			<div class='reminder'>🞇 LMB & RMB to modify </div>
-			<div class='reminder rreminder' style="left: 89%"> ESC to exit 🞇</div>
+			<div class='reminder'><b>🞇</b> LMB & RMB to modify </div>
+			<div class='reminder rreminder' style="left: 89%"> ESC to exit <b>🞇</b></div>
 			<div class='mrem'>Drop file inside matrix to import</div>
 		</div>
 
@@ -65,19 +69,19 @@
 
 		<div class='ctrlpad botpad' style="left: 68%; border-radius: 0px 0px 5px 5px; border-top: 0px; margin-top: -4px;">
 			<div id="height" class="counter" style="border-bottom: 1px solid #000022; padding-top: 3px; padding-bottom: 2px"></div>
-			<div id="height_dec" class="ctrl">▼</div>
+			<div id="height_dec" class="ctrl"><b>▼</b></div>
 			<div class="mrem">height</div>
-			<div id="height_inc" class="ctrl">▲</div>
+			<div id="height_inc" class="ctrl"><b>▲</b></div>
 		</div>
 
 		<div class="winbar" style="border-radius: 0px 0px 5px 5px; margin-top: -4px">
-			<div class='reminder'>🞇 🡑🡐🡒🡓 to scroll </div>
-			<div class='reminder rreminder' style="left: 81%"> Wheel to zoom & drag 🞇</div>
+			<div class='reminder'><b>🞇 🡑🡐🡒🡓</b> to scroll </div>
+			<div class='reminder rreminder' style="left: 81%"> Wheel to zoom & drag <b>🞇</b></div>
 			<div class='mrem'>Crtl+S to export / Ctrl+L to import</div>
 		</div>
 
 		<div class ="extrusion" style='border-top: 3px dashed slategray; border-radius: 0px 0px 5px 5px'>
-			🞇 Developed in 2018 by <a href='http://vk.com/guevara_chan' target="_blank">V.A. Guevara</a> 🞇</div>
+			<b>🞇</b> Developed in 2018 by <a href='http://vk.com/guevara_chan' target="_blank">V.A. Guevara</a> <b>🞇</b></div>
 		</div>
 		</center>
 
