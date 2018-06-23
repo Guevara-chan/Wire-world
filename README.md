@@ -11,8 +11,8 @@ Optimization and retro aesthetics are highly prioritized during develepment proc
 
 # ⋮Compatibility⋮
 _Wire=world_ was best tested with Chrome 67 and [Electron](https://electronjs.org/), which is used to develop it.  
-Mozilla Firefox is overall supported, except for minor ui disambiguation.  
-Mobile devices support is comming soon.
+Support for Mozilla Firefox and Edge is mostly established, except for minor ui disambiguation.  
+Mobile devices support will be comming soon.
 
 # ⋮Brief sampling of logic power⋮
 ![image](https://user-images.githubusercontent.com/8768470/41752189-9465aa78-75ce-11e8-87fc-ca11d0195df9.png)
