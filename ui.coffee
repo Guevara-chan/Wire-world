@@ -51,6 +51,10 @@ class VisualAutomata extends Automata
 	resize_ex: (wmod = 0, hmod = 0) ->
 		@resize @width + wmod, @height + hmod
 
+	clear: (args...) ->
+		@powered = false
+		super ...args
+
 	render: (bmp, scale = 1) ->
 		ptr	= 0
 		for row, y in @cells
