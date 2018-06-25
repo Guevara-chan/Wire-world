@@ -45,7 +45,7 @@ class VisualAutomata extends Automata
 				new_row
 		throw new TypeError("invalid matrix data provided") unless height > 2 and width > 2
 		feeder = feeder ? reshape(width, height)
-		[@width, @height, @ticks, @cells] = [width, height, 0, feeder]
+		[@width, @height, @cells] = [width, height, feeder]
 		return @
 
 	resize_ex: (wmod = 0, hmod = 0) ->
@@ -78,6 +78,7 @@ class VisualAutomata extends Automata
 			height	= (val = val.split '\n').length
 			width	= val[0]?.length
 		@resize width, height, (Uint8Array.from (_ascii_set.indexOf cell for cell in row) for row in val)
+		@powered = false
 # -------------------- #
 class ViewPort
 	scroll	= {x: 0, y: 0}
