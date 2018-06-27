@@ -15,4 +15,4 @@ Support for Mozilla Firefox and Edge is mostly established, except for minor ui 
 Mobile devices support will be comming soon.
 
 # ⋮Brief sampling of logic power⋮
-![image](https://user-images.githubusercontent.com/8768470/41819547-b0ca329e-77ca-11e8-966a-b5763f9518d4.png)
+![image](https://user-images.githubusercontent.com/8768470/41989400-dd5d4150-7a47-11e8-88b2-1362e20be1fd.png)
