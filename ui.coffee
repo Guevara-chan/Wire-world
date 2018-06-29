@@ -13,8 +13,8 @@ class VisualAutomata extends Automata
 	powered:	false
 	speed:		90
 	last_update: 0
-	_ascii_set	= " .@*"
-	_key		= "matrix_data"
+	ascii_set	= " .@*"
+	store_key	= "matrix_data"
 
 	# --Methods goes here.
 	constructor: (args...) ->
@@ -27,7 +27,7 @@ class VisualAutomata extends Automata
 			@set x, midline + 2 for x in [-10..10]
 			@set -10, midline, Cell.tail
 			@set -11, midline + 1, Cell.head
-		setInterval (-> @storage = @ascii), 1000
+		setInterval (-> @storage = @ascii).bind(@), 200
 		setInterval (->	if @powered and Date.now() - @last_update >= 400 - 4 * Math.min @speed, 100
 			@tick(Math.ceil @speed / 100)
 			).bind(@), 10
@@ -61,7 +61,6 @@ class VisualAutomata extends Automata
 			for cell, x in row
 				c = [0x000022, 0xffff00, 0x00ffff, 0xff0000][cell] 
 				bmp[ptr++] = c>>16 & 255; bmp[ptr++] = c>>8 & 255; bmp[ptr++] = c & 255; bmp[ptr++] = 0xff
-		localStorage.setItem(_key, @ascii)
 		return @
 
 	tick: (args...) ->
@@ -69,15 +68,15 @@ class VisualAutomata extends Automata
 		super ...args
 
 	# --Properties goes here.
-	@getter 'storage', ()		-> localStorage.getItem(_key)
-	@setter 'storage', (val)	-> localStorage.setItem(_key, val)
-	@getter 'ascii', ()			-> ((_ascii_set[cell] for cell in row).join '' for row in @cells).join '\n'
+	@getter 'storage', ()		-> localStorage.getItem(store_key)
+	@setter 'storage', (val)	-> localStorage.setItem(store_key, val)
+	@getter 'ascii', ()			-> ((ascii_set[cell] for cell in row).join '' for row in @cells).join '\n'
 	@setter 'ascii', (val)		->
 		val = val.replace /\r/g, ''
-		unless val.split('').find (char) -> not (char in _ascii_set or char in '\n')
+		unless val.split('').find (char) -> not (char in ascii_set or char in '\n')
 			height	= (val = val.split '\n').length
 			width	= val[0]?.length
-		@resize width, height, (Uint8Array.from (_ascii_set.indexOf cell for cell in row) for row in val)
+		@resize width, height, (Uint8Array.from (ascii_set.indexOf cell for cell in row) for row in val)
 		@powered = false
 # -------------------- #
 class ViewPort
@@ -194,7 +193,6 @@ class UI
 			e.preventDefault()
 		# Mouse inputs.
 		scroll_lock = (feed) -> scrolling = if feed then {x: feed.x, y: feed.y} else false
-		@app.canvas.addEventListener "wheel", (e) => @on[['zoomin', 'noop', 'zoomout'][1 + Math.sign e.deltaY]]()
 		@scene.input.on 'pointerup', ((ptr) => scroll_lock() if ptr.buttons > 2), ui
 		@scene.input.on 'pointerdown', ((ptr) ->
 			switch ptr.buttons
@@ -208,6 +206,10 @@ class UI
 					@vp["scroll#{coord.toUpperCase()}"] += (ptr[coord]-scrolling[coord]) // (1+Math.log2 @vp.zoom)
 				scroll_lock ptr
 			), ui
+		@app.canvas.addEventListener "wheel", (e) =>
+			@on[['zoomin', 'noop', 'zoomout'][1 + Math.sign e.deltaY]]()
+			e.preventDefault()
+			return false
 		# Making UI visible.
 		document.getElementById('ui').style.visibility = 'visible'
 
