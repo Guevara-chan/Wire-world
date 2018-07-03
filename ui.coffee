@@ -1,7 +1,7 @@
 ﻿# ~Wireworld visual simulator.
 # ==Extnesion methods==
-Function::getter = (name, proc)	-> Object.defineProperty @prototype, name, {get: proc, configurable: true}
-Function::setter = (name, proc)	-> Object.defineProperty @prototype, name, {set: proc, configurable: true}
+Function::getter = (name, proc)	-> Reflect.defineProperty @prototype, name, {get: proc, configurable: true}
+Function::setter = (name, proc)	-> Reflect.defineProperty @prototype, name, {set: proc, configurable: true}
 Boolean::either	= (true_val, false_val = '') -> if @valueOf() then true_val else false_val
 Function::new_branch = (name, body) -> @getter name, -> new BranchProxy @, body
 BranchProxy = (root, body) -> # Auxilary proc for new_branch.
