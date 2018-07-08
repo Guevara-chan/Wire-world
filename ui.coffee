@@ -31,7 +31,6 @@ class VisualAutomata extends Automata
 		setInterval (->	if @powered and Date.now() - @last_update >= 400 - 4 * Math.min @speed, 100
 			@tick(Math.ceil @speed / 100)
 			).bind(@), 10
-		@reshape 1000, 1000
 
 	morph: (x, y, shift = 1) ->
 		@set x, y, Cell.cycle @get(x, y), shift
@@ -39,7 +38,7 @@ class VisualAutomata extends Automata
 
 	resize: (width, height, feeder) ->
 		throw new TypeError("invalid matrix data provided") unless height > 2 and width > 2
-		@cells = feeder ? @reshape(width, height).cells
+		if feeder then [@width, @height, @cells] = [width, height, feeder] else @reshape(width, height)
 		return @
 
 	resize_ex: (wmod = 0, hmod = 0) ->
