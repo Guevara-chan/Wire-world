@@ -31,21 +31,15 @@ class VisualAutomata extends Automata
 		setInterval (->	if @powered and Date.now() - @last_update >= 400 - 4 * Math.min @speed, 100
 			@tick(Math.ceil @speed / 100)
 			).bind(@), 10
+		@reshape 1000, 1000
 
 	morph: (x, y, shift = 1) ->
 		@set x, y, Cell.cycle @get(x, y), shift
 		return @
 
 	resize: (width, height, feeder) ->
-		reshape = (width, height) =>
-			@cells.length = height
-			@cells = for row in @cells
-				new_row = new Uint8Array(width)
-				new_row.set(row[..width-1]) if row
-				new_row
 		throw new TypeError("invalid matrix data provided") unless height > 2 and width > 2
-		feeder = feeder ? reshape(width, height)
-		[@width, @height, @cells] = [width, height, feeder]
+		@cells = feeder ? @reshape(width, height).cells
 		return @
 
 	resize_ex: (wmod = 0, hmod = 0) ->
@@ -57,10 +51,9 @@ class VisualAutomata extends Automata
 
 	render: (bmp, scale = 1) ->
 		ptr	= 0
-		for row, y in @cells
-			for cell, x in row
-				c = [0x000022, 0xffff00, 0x00ffff, 0xff0000][cell] 
-				bmp[ptr++] = c>>16 & 255; bmp[ptr++] = c>>8 & 255; bmp[ptr++] = c & 255; bmp[ptr++] = 0xff
+		for cell in @cells
+			c = [0x000022, 0xffff00, 0x00ffff, 0xff0000][cell] 
+			bmp[ptr++] = c>>16 & 255; bmp[ptr++] = c>>8 & 255; bmp[ptr++] = c & 255; bmp[ptr++] = 0xff
 		return @
 
 	tick: (args...) ->
@@ -70,13 +63,14 @@ class VisualAutomata extends Automata
 	# --Properties goes here.
 	@getter 'storage', ()		-> localStorage.getItem(store_key)
 	@setter 'storage', (val)	-> localStorage.setItem(store_key, val)
-	@getter 'ascii', ()			-> ((ascii_set[cell] for cell in row).join '' for row in @cells).join '\n'
+	@getter 'ascii', ()			-> ((ascii_set[cell] for cell in @get_row i).join '' for i in [0...@height]).join '\n'
 	@setter 'ascii', (val)		->
 		val = val.replace /\r/g, ''
 		unless val.split('').find (char) -> not (char in ascii_set or char in '\n')
 			height	= (val = val.split '\n').length
 			width	= val[0]?.length
-		@resize width, height, (Uint8Array.from (ascii_set.indexOf cell for cell in row) for row in val)
+			val		= val.join ''
+		@resize width, height, @kind.from(ascii_set.indexOf cell for cell in val)
 		@powered = false
 # -------------------- #
 class ViewPort
