@@ -90,9 +90,6 @@ class ViewPort
 		@tiles				= []
 
 	pick: (screen_x, screen_y) ->
-		console.log [(screen_x - @tiles[0].x + @tiles[0].displayOriginX * @zoom) // @zoom,
-			(screen_y - @tiles[0].y + @tiles[0].displayOriginY * @zoom) // @zoom]
-
 		[(screen_x - @tiles[0].x + @tiles[0].displayOriginX * @zoom) // @zoom,
 		(screen_y - @tiles[0].y + @tiles[0].displayOriginY * @zoom) // @zoom]
 
