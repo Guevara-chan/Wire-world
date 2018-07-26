@@ -55,7 +55,7 @@ class VisualAutomata extends Automata
 		@powered = false
 		super ...args
 
-	render: (bmp, scale = 1) ->
+	render: (bmp) ->
 		ptr	= 0
 		for row, y in @cells
 			for cell, x in row
@@ -86,21 +86,21 @@ class ViewPort
 	# --Methods goes here.
 	constructor: (@scene, @machine) ->
 		[@width, @height]	= [@scene.cameras.main.width, @scene.cameras.main.height]
-		@output				= @scene.textures.createCanvas 'cvs', 0, 0
-		@tiles				= []
+		@tile				= @scene.textures.createCanvas 'cvs', 0, 0
+		@output				= @scene.add.renderTexture(@width / 2, @height / 2, @width, @height).setOrigin 0.5
 
 	pick: (screen_x, screen_y) ->
-		[(screen_x - @tiles[0].x + @tiles[0].displayOriginX * @zoom) // @zoom,
-		(screen_y - @tiles[0].y + @tiles[0].displayOriginY * @zoom) // @zoom]
+		[(screen_x - (@width - @machine.width * @zoom) // 2) // @zoom - @scrollX,
+		(screen_y - (@height - @machine.height * @zoom) // 2) // @zoom - @scrollY]
 
 	sync: () ->
 		# Primary rendering.
-		@output.context.canvas[metric] = @machine[metric] for metric in ['width', 'height']
-		@output.setSize @machine.width, @machine.height
-		bmp = @output.context.getImageData(0, 0, @machine.width, @machine.height)
+		@tile.context.canvas[metric] = @machine[metric] for metric in ['width', 'height']
+		@tile.setSize @machine.width, @machine.height
+		bmp = @tile.context.getImageData(0, 0, @machine.width, @machine.height)
 		@machine.render bmp.data, @zoom
-		@output.context.putImageData bmp, 0, 0
-		@output.refresh()
+		@tile.context.putImageData bmp, 0, 0
+		@tile.refresh()
 		# Tiling calculation.
 		tiling = (full, part, corrector) =>
 			result = Math.max 1, 2 * Math.sign(corrector) + Math.ceil full / part
@@ -108,15 +108,14 @@ class ViewPort
 		[@scrollX, @scrollY] = [@scrollX, @scrollY]
 		xfactor = tiling(@width, @machine.width * @zoom, @scrollX) // 2
 		yfactor = tiling(@height, @machine.height * @zoom, @scrollY) // 2
-		xstep = @zoom * @machine.width
-		ystep = @zoom * @machine.height
 		# Tiling fit in.
-		tile.destroy() while tile = @tiles.pop()
+		@output.clear()
 		for y in [-yfactor..yfactor]
 			for x in [-xfactor..xfactor]
-				@tiles.push tile = (@scene.add.image @width / 2 + x * xstep + @scrollX * @zoom,
-				@height / 2 + y * ystep + @scrollY * @zoom, 'cvs').setScale(@zoom)
-				tile.depth = -1
+				@output.draw(@tile, @scene.textures.getFrame('cvs'),
+					@output.width	/ 2 + (x - 0.5) * @machine.width	+ @scrollX,
+					@output.height	/ 2 + (y - 0.5) * @machine.height	+ @scrollY)
+		@output.setScale(@zoom, @zoom)
 
 	# --Properties goes here.
 	@getter 'zoom',	()			-> zoom
