@@ -112,7 +112,7 @@ class ViewPort
 		@output.clear()
 		for y in [-yfactor..yfactor]
 			for x in [-xfactor..xfactor]
-				@output.draw(@tile, @tile.get('cvs'),
+				@output.draw(@tile, @tile.get(),
 					@output.width	/ 2 + (x - 0.5) * @machine.width	+ @scrollX,
 					@output.height	/ 2 + (y - 0.5) * @machine.height	+ @scrollY)
 		@output.setScale(@zoom, @zoom)
