@@ -22,8 +22,9 @@ class Automata
 	tick: (steps = 1) ->
 		while steps-- and ++@ticks
 			@cells = for row, y in @cells
-				Uint8Array.from (for cell, x in row
-					switch cell
+				accum = new Uint8Array(@width)
+				for cell, x in row
+					accum[x] = switch cell
 						when Cell.head then Cell.tail
 						when Cell.tail then Cell.cond
 						when Cell.cond # Conductivity
@@ -31,7 +32,8 @@ class Automata
 							for [tx, ty] in [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]]
 								heads++ if @get(x + tx, y + ty) is Cell.head
 							if 1 <= heads <= 2 then Cell.head else Cell.cond
-						else cell)
+						else cell
+				accum # (return).
 		return @
 #.} [Classes]
 
