@@ -121,9 +121,9 @@ class ViewPort
 	@getter 'zoom',	()			-> zoom
 	@setter 'zoom',	(val)		-> zoom = val
 	@getter 'scrollX', ()		-> scroll.x
-	@setter 'scrollX', (val)	-> scroll.x = val.wrap @machine.width
+	@setter 'scrollX', (val)	-> scroll.x = val %% @machine.width
 	@getter 'scrollY', ()		-> scroll.y
-	@setter 'scrollY', (val)	-> scroll.y = val.wrap @machine.height
+	@setter 'scrollY', (val)	-> scroll.y = val %% @machine.height
 # -------------------- #
 class UI
 	init_scale	= 6
@@ -214,7 +214,7 @@ class UI
 		@tinformer.setText "Zoom: #{@vp.zoom}x [PgUp/PgDn] | Speed: #{@speed}% [+/-] |
 		#{@powered.either 'P', 'Unp'}owered [Enter]"
 		@binformer.setText "Matrix: #{@machine.width}x#{@machine.height} [Copy/Paste/Del] " +
-			@powered.either "#{['|', '/', '-', '\\'][(@machine.ticks // Math.ceil @speed / 100).wrap 4]}",
+			@powered.either "#{['|', '/', '-', '\\'][(@machine.ticks // Math.ceil @speed / 100) %% 4]}",
 			"| Cycle: 0x#{@machine.ticks.toString(16)} [Space]"
 		# External GUI render.
 		@meters[metric].innerText = @machine[metric] for metric in ['width', 'height']

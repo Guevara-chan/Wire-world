@@ -1,18 +1,15 @@
 # ~>Wireworld core simulation.
-# ==Extnesion methods==
-Number::wrap = (max) -> (@ % max + max) % max
-
 #.{ [Classes]
 class Cell
 	@[name] = idx for name, idx in ['void', 'cond', 'head', 'tail']
-	@cycle: (type, shift) -> (type + shift).wrap 4
+	@cycle: (type, shift) -> (type + shift) %% 4
 # -------------------- #
 class Automata
 	# --Methods goes here.
 	constructor: (@width = 4, @height = 4, @wrap = false) ->
 		if @clear() and @wrap
-			@get = (x, y)					-> @cells[y.wrap @height][x.wrap @width]
-			@set = (x, y, type = Cell.cond)	-> @cells[y.wrap @height][x.wrap @width] = type
+			@get = (x, y)					-> @cells[y %% @height][x %% @width]
+			@set = (x, y, type = Cell.cond)	-> @cells[y %% @height][x %% @width] = type
 		else			
 			@get = (x, y)					-> @cells[y]?[x]
 			@set = (x, y, type = Cell.cond)	-> @cells[y]?[x] = type
