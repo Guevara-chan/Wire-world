@@ -28,8 +28,8 @@ class Automata
 						when Cell.tail then Cell.cond
 						when Cell.cond # Conductivity
 							heads = 0
-							for offset in [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]]
-								heads++ if @get(x + offset[0], y + offset[1]) is Cell.head
+							for [tx, ty] in [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]]
+								heads++ if @get(x + tx, y + ty) is Cell.head
 							if heads in [1, 2] then Cell.head else Cell.cond
 						else cell)
 		return @
