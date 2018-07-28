@@ -30,7 +30,7 @@ class Automata
 							heads = 0
 							for [tx, ty] in [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]]
 								heads++ if @get(x + tx, y + ty) is Cell.head
-							if heads in [1, 2] then Cell.head else Cell.cond
+							if 1 <= heads <= 2 then Cell.head else Cell.cond
 						else cell)
 		return @
 #.} [Classes]
