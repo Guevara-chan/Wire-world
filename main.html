@@ -18,7 +18,7 @@
 			.centerer {position: absolute; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%);}
 
 			.winbar {background: slategray; padding-bottom: 3px; font-family: Roboto; font-size: 14px; height: 17px; box-shadow: 0px 0px 2px slategray}
-			.reminder {position:absolute; margin-left: 3px; border-width: 0px 2px 0px 0px; border-style: solid; border-color: black; height: 20px;}
+			.reminder {position:absolute; margin-left: 3px; border-width: 0px 2px 0px 0px; border-style: solid; border-color: black; height: 20px;margin-top: -1px}
 			.rreminder {border-width: 0px 0px 0px 2px; right: 3px}
 			.mrem, .ctrl {display: inline-block}
 			.reminder:hover, .mrem:hover {color: linen; transition: .5s}
@@ -32,7 +32,7 @@
 
 			@-moz-document url-prefix() {
 			.extrusion {padding: 2.3px}
-			.reminder {height: 21px}
+			.reminder_fix {margin-top: -1px;}
 			.ctrlpad {margin-top: -3px}
 			}
 
@@ -61,8 +61,8 @@
 		</div>
 
 		<div class="winbar" style='border-radius: 5px 5px 0px 0px;'>
-			<div class='reminder'><b>🞇</b> LMB & RMB to modify </div>
-			<div class='reminder rreminder'> ESC to exit <b>🞇</b></div>
+			<div class='reminder reminder_fix'><b>🞇</b> LMB & RMB to modify </div>
+			<div class='reminder reminder_fix rreminder'> ESC to exit <b>🞇</b></div>
 			<div class='mrem'>Drop file inside matrix to import</div>
 		</div>
 
