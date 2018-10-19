@@ -10,7 +10,7 @@ Optimization and retro aesthetics are highly prioritized during develepment proc
 * 90% of functionality covered by keyboard hotkeys.
 
 # ⋮Compatibility⋮
-_Wire=world_ was best tested with _Chrome 67_ and [Electron](https://electronjs.org/), which is used to develop it.  
+__Wire=world__ was best tested with _Chrome 67_ and [Electron](https://electronjs.org/), which is used to develop it.  
 Support for _Mozilla Firefox_ and _Edge_ is mostly established, except for minor ui disambiguation.  
 Mobile devices support will be comming soon.
 
